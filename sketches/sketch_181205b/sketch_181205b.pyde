@@ -6,7 +6,7 @@ angleChange = 5
 angleLimit = 360
 
 def setup():
-  global img, back, img_mirror, dance, pic, danceStep, danceLimit, angle, angleChange, angleLimit, couple
+  global img, back, img_mirror, dance, pic, danceStep, danceLimit, angle, angleChange, angleLimit, couple, stairs, staircase
   size(723,1024,P3D)
   # Make a new instance of a PImage by loading an image file
   # Declaring a variable of type PImage
@@ -15,11 +15,12 @@ def setup():
   back = loadImage("poster.jpg")
   pic = img
   smooth()
+  lights()
   frameRate(30)
   noStroke()
 
 def draw():
-  global img, back, img_mirror, dance, pic, danceStep, danceLimit, angle, angleChange, angleLimit, couple
+  global img, back, img_mirror, dance, pic, danceStep, danceLimit, angle, angleChange, angleLimit, couple, stairs, staircase
   background(back)
   translate(width / 2, 0, 0)
   #rotateX(map(mouseY, 0, height, -PI, PI))
@@ -28,6 +29,7 @@ def draw():
   pushMatrix()
   couple = createShape(SPHERE, 200)
   couple.setTexture(pic)
+  
   move()
   dance += danceStep
   angle += angleChange
@@ -40,10 +42,10 @@ def draw():
   popMatrix()
 
 def move():
-    global dance, couple, angle
+    global dance, couple, angle, staircase
     pushMatrix()
-    translate(0, dance, 0)
-    rotateY(map(dance, 0, width, -PI, PI))
+    couple.translate(0, dance, 0)
+    couple.rotateY(map(dance, 0, width, -PI, PI))
     shape(couple)
     popMatrix()
   
