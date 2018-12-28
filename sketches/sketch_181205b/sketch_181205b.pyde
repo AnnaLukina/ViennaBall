@@ -1,11 +1,11 @@
 dance = 0
-danceStep = 10
+danceStep = 20
 danceLimit = 4032
 ang = 0.0
 frame = 0
 
 def setup():
-  global frame, img, img_FM, img_MM, img_FF, img_heart_red, img_heart_gold, img_atom, img_logic_A, back, dance, danceStep, danceLimit, couple, ang, x, y, filla, fillb, fillc
+  global frame, V, img, img_FM, img_MM, img_FF, img_heart_red, img_heart_gold, img_atom, img_logic_A, back, dance, danceStep, danceLimit, couple, ang, x, y, filla, fillb, fillc
   # Make a new instance of a PImage by loading an image file
   # Declaring a variable of type PImage
   img_MM = loadImage("Men_Dancers_PURE.gif")
@@ -35,6 +35,7 @@ def setup():
   img_atom = loadImage("Atom_Shape_PURE.gif")
   img_atom.resize(100,100)
   back = loadImage("stairs_11.jpg")
+  holo = loadImage("9.jpg")
   size(2016,1512,P3D)
   smooth()
   lights()
@@ -45,9 +46,12 @@ def setup():
   filla=0
   fillb=0
   fillc=0
+  frame = 0
+  V = loadShape("Heart_G.obj")
+  V.rotateX(PI)
 
 def draw():
-  global frame, img, img_FM, img_MM, ing_FF, img_heart_red, img_heart_gold, img_logic_A, atom1, atom2, atom3, img_atom, back, dance, danceStep, danceLimit, couple, ang, filla, fillb, fillc, x, y
+  global frame, V, img, img_FM, img_MM, ing_FF, img_heart_red, img_heart_gold, img_logic_A, atom1, atom2, atom3, img_atom, back, dance, danceStep, danceLimit, couple, ang, filla, fillb, fillc, x, y
   background(0)
   translate(width / 2, height / 2, 0)
   #rotateX(map(mouseY, 0, height, -PI, PI))
@@ -55,26 +59,28 @@ def draw():
   #noStroke()
   #noFill()
   
+  # dancers on the steps
   if frame < 1000:
-    
-    for step in range(0,10):
-        #gradient stairs
-        stroke(0,255,255)
-        strokeWeight(1)
-        fill(filla, fillb, fillc)
-        rectMode(CENTER)
-        rect(0, x, y, back.height/13)
-        #roll down stairs
-        x += back.height/13
-        y += back.width/13
-        fillb += 255/13
-        fillc += 255/13
-        if fillb >= 255:
-            fillb = 0
-            fillc = 0
-            x = -back.height/2
-            y = 0
-    
+  #  for step in range(0,14):
+  #      #gradient stairs
+  #      stroke(89,254,232)
+  #      strokeWeight(1)
+  #      fill(filla, fillb, fillc)
+  #      rectMode(CENTER)
+  #      rect(0, x, y, back.height/13)
+  #      #roll down stairs
+  #      x += back.height/13
+  #      y += back.width/13
+  #      filla += 89/13
+  #      fillb += 254/13
+  #      fillc += 232/13
+  #      if fillb >= 254:
+  #          filla = 0
+  #          fillb = 0
+  #          fillc = 0
+  #          x = -back.height/2
+  #          y = 0
+  #  
     noStroke()
     noFill()
     
@@ -104,7 +110,7 @@ def draw():
     couple16.vertex(img_FF.width/2, img_FF.height/2, 1, 1);
     couple16.vertex(-img_FF.width/2, img_FF.height/2, 0, 1);
     couple16.endShape();
-    couple16.translate(0, 0, -img.height)
+    couple16.translate(0, 0, -2*img.height)
     
     couple12.beginShape();
     couple12.texture(img_MM);
@@ -142,12 +148,13 @@ def draw():
     couple15.endShape();
     couple15.translate(-img.width, img.height, -img.height)
     
-    stroke(0,255,255)
+    stroke(89,254,232)
     strokeWeight(2)
     atom1 = createShape(ELLIPSE, 0, 0, img.width+50, img.height+100)
     atom2 = createShape(ELLIPSE, 0, 0, img.width+50, img.height+100)
     atom3 = createShape(ELLIPSE, 0, 0, img.width+50, img.height+100)
     noStroke()
+    noFill()
     
     couple.addChild(couple11)
     couple.addChild(couple12)
@@ -162,31 +169,34 @@ def draw():
         dance = 0
         dance += danceStep
     popMatrix()
-    #frame += 1
-  #else:
-  #  noLoop()
+    frame += 1
   #saveFrame("frame-######.png");
     
 def move():
-    global dance, couple, atom1, atom2, atom3, ang
+    global dance, V, couple, atom1, atom2, atom3, ang
     pushMatrix()
     # rotate the shape around Y axis
-    couple.translate(0, 100, 500)
-    couple.rotateY(map(dance, 0, width, -PI/2, PI/2))
-    shape(couple)
-    couple.translate(0, 100, 400)
-    couple.rotateY(map(dance-50, 0, width, -PI/2, PI/2))
-    shape(couple)
-    couple.translate(0, 100, 300)
-    couple.rotateY(map(dance-100, 0, width, -PI/2, PI/2))
-    shape(couple)
-    couple.translate(0, 100, 200)
-    couple.rotateY(map(dance-150, 0, width, -PI/2, PI/2))
-    shape(couple)
-    couple.translate(0, 100, 100)
-    couple.rotateY(map(dance-200, 0, width, -PI/2, PI/2))
-    shape(couple)
-    
+    #couple.translate(0, 100, 500)
+    #couple.rotateY(map(dance, 0, width, -PI/2, PI/2))
+    #shape(couple)
+    #couple.translate(0, 100, 400)
+    #couple.rotateY(map(dance-50, 0, width, -PI/2, PI/2))
+    #shape(couple)
+    #couple.translate(0, 100, 300)
+    #couple.rotateY(map(dance-100, 0, width, -PI/2, PI/2))
+    #shape(couple)
+    #couple.translate(0, 100, 200)
+    #couple.rotateY(map(dance-150, 0, width, -PI/2, PI/2))
+    #shape(couple)
+    #couple.translate(0, 100, 100)
+    #couple.rotateY(map(dance-200, 0, width, -PI/2, PI/2))
+    #shape(couple)
+    V.translate(0, 0, 0)
+    V.rotateY(PI/100)
+    V.rotateX(PI/100)
+    V.rotateZ(PI/100)
+    shape(V, 0, 0)
+    # rotate the nucleus
     ang += 0.1
     atom1.rotateX(ang)
     atom2.rotateY(ang)
@@ -195,7 +205,7 @@ def move():
     atom.addChild(atom1)
     atom.addChild(atom2)
     atom.addChild(atom3)
-    atom.translate(0, 100, 500)
+    atom.translate(0, 0, dance-2000)
     shape(atom)
     popMatrix()
   
