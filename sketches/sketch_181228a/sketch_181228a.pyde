@@ -18,12 +18,13 @@ from flock import Flock
 flock = Flock()
 
 def setup():
-    global img_element, columns, rows, cellsize, img, explode
+    global img_element, columns, rows, cellsize, img, explode, frame
     img = loadImage("Head_Hearts.gif")  # Load the image
     cellsize = 2  # Dimensions of each cell in the grid
     columns = img.width / cellsize  # Calculate # of columns
     rows = img.height / cellsize  # Calculate # of rows
     explode = 0
+    frame = 0
     
     size(1000, 2000, P3D)
     
@@ -35,6 +36,14 @@ def setup():
     img_element.append(loadImage("Logic_L.gif"))
     img_element.append(loadImage("Logic_U.gif"))
     img_element.append(loadImage("Logic_V.gif"))
+    letter_A = loadImage("Logic_A.gif")
+    img_element.append(letter_A)
+    letter_L = loadImage("Logic_L.gif")
+    img_element.append(letter_L)
+    letter_C = loadImage("Logic_U.gif")
+    img_element.append(letter_C)
+    letter_V = loadImage("Logic_V.gif")
+    img_element.append(letter_V)
     textureMode(NORMAL)
     
     # spawn flocks in random places of the image
@@ -47,9 +56,9 @@ def setup():
             flock.addBoid(Boid(boid_x, boid_y, img_element[k]))
    
 def draw():
-    global img_element, columns, rows, cellsize, img, explode
+    global img_element, columns, rows, cellsize, img, explode, frame
     background(0)
-    explode += 50
+    #explode += 50
     # Begin loop for columns
     #for i in range(columns):
         # Begin loop for rows
@@ -75,6 +84,19 @@ def draw():
     
     # Raise overall light in scene
     #ambientLight(70, 70, 10)
+    
+    # spawn the word VCLA which will join the flock
+    if frame == 100:
+        boid_x = width/2#random(-img.width / 4, img.width / 4)
+        boid_y = height/2#random(-img.height / 4, img.height / 4)
+        flock.addBoid(Boid(boid_x, boid_y, img_element[10]))
+        flock.addBoid(Boid(boid_x + 25, boid_y, img_element[9]))
+        flock.addBoid(Boid(boid_x + 50, boid_y, img_element[8]))
+        flock.addBoid(Boid(boid_x + 75, boid_y, img_element[7]))
+        frame = 0
+    else:
+        frame += 1
+    
     flock.run()
 
 # Add a boid into the System
