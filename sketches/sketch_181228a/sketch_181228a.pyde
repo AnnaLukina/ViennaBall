@@ -1,8 +1,8 @@
 """
-V Formation 
+Formation 
 by Anna Lukina
 based on
-Flocking
+Flocking and Circle Packing
 by Daniel Shiffman.    
 
 An implementation of Craig Reynold's Boid to simulate
@@ -18,15 +18,16 @@ from flock import Flock
 flock = Flock()
 
 def setup():
-    global img_element, columns, rows, cellsize, img, explode, frame
+    global img_element, columns, rows, cellsize, img, explode, frame, word, spots
     img = loadImage("Head_Hearts.gif")  # Load the image
     cellsize = 2  # Dimensions of each cell in the grid
     columns = img.width / cellsize  # Calculate # of columns
     rows = img.height / cellsize  # Calculate # of rows
     explode = 0
     frame = 0
+    frameRate(100)
     
-    size(1000, 2000, P3D)
+    size(1500, 1000, P3D)
     
     img_element = []
     img_element.append(loadImage("Heart Red.gif"))
@@ -36,70 +37,73 @@ def setup():
     img_element.append(loadImage("Logic_L.gif"))
     img_element.append(loadImage("Logic_U.gif"))
     img_element.append(loadImage("Logic_V.gif"))
-    letter_A = loadImage("Logic_A.gif")
-    img_element.append(letter_A)
-    letter_L = loadImage("Logic_L.gif")
-    img_element.append(letter_L)
-    letter_C = loadImage("Logic_U.gif")
-    img_element.append(letter_C)
-    letter_V = loadImage("Logic_V.gif")
-    img_element.append(letter_V)
+    
     textureMode(NORMAL)
     
     # spawn flocks in random places of the image
+    word = 0
     for k in range(0, len(img_element)):
         # Add an initial set of boids into the system
-        boid_x = random(-img.width / 4, img.width / 4)
-        boid_y = random(-img.height / 4, img.height / 4)
+        boid_x = random(-width / 2, width / 2)
+        boid_y = random(-height / 2, height / 2)
         
-        for i in range(5):
-            flock.addBoid(Boid(boid_x, boid_y, img_element[k]))
+        for i in range(10):
+            flock.addBoid(Boid(boid_x, boid_y, img_element[k]), word)
+    
+    # read white pixels of the word image        
+    spots = []
+    img_word = loadImage("nauka.png")
+    img_word.resize(1500, 500)
+    img_word.loadPixels()
+    for x in range(img_word.width):
+        for y in range(img_word.height):
+            index = x + y * img_word.width
+            c = img_word.pixels[index]
+            b = brightness(c)
+            if b > 1:
+                spots.append(PVector(x,y))
    
 def draw():
-    global img_element, columns, rows, cellsize, img, explode, frame
+    global img_element, columns, rows, cellsize, img, explode, frame, word, spots
     background(0)
-    #explode += 50
-    # Begin loop for columns
-    #for i in range(columns):
-        # Begin loop for rows
-     #   for j in range(rows):
-     #       x = i * cellsize + cellsize / 2  # x position
-     #       y = j * cellsize + cellsize / 2  # y position
-     #       loc = x + y * img.width  # Pixel array location
-     #       c = img.pixels[loc]  # Grab the color
-            # Calculate a z position as a function of mouseX and pixel
-            # brightness
-     #       z = (explode / float(width)) * brightness(img.pixels[loc]) - 20.0
-            # Translate to the location, set fill and stroke, and draw the rect
-     #       with pushMatrix():
-     #           translate(x + 200, y + 100, z)
-     #           fill(c, 204)
-     #           noStroke()
-     #           rectMode(CENTER)
-     #           rect(0, 0, cellsize, cellsize)
-                
-    # Set up some different colored lights
-    #pointLight(51, 102, 126, 35, 40, 36)
-    #pointLight(200, 40, 60, -65, -60, -150)
     
-    # Raise overall light in scene
-    #ambientLight(70, 70, 10)
+    # spawn a given word which will join the flock
+    if frame > 500 and frame < 1000:
+        # spawn elements in white pixels of word image
+        word = 1
+        # pick a random element
+        k = int(random(0, len(img_element)))
+        # pack an element into a random pixel
+        r = int(random(0, len(spots)))
+        spot = spots[r]
+        # spawn a new boid for formation of letters
+        flock.addBoid(Boid(spot.x, spot.y, img_element[k]), word)
+
+        # make the word to be stable for a few frames
+        flock.run(word)
+    if frame >= 1000:
+        word = 1
+        flock.run(word)
+    if frame >= 1200 and flock.letters:
+        # make the word join the flock
+        if not frame % 100:
+            word = 0
+            for b in range(5):
+                flock.addBoid(flock.letters[-1], word)
+                del flock.letters[-1]
     
-    # spawn the word VCLA which will join the flock
-    if frame == 100:
-        boid_x = width/2#random(-img.width / 4, img.width / 4)
-        boid_y = height/2#random(-img.height / 4, img.height / 4)
-        flock.addBoid(Boid(boid_x, boid_y, img_element[10]))
-        flock.addBoid(Boid(boid_x + 25, boid_y, img_element[9]))
-        flock.addBoid(Boid(boid_x + 50, boid_y, img_element[8]))
-        flock.addBoid(Boid(boid_x + 75, boid_y, img_element[7]))
-        frame = 0
-    else:
-        frame += 1
+    frame += 1
+    word = 0
+    flock.run(word)
     
-    flock.run()
+    #videoExport.saveFrame()
 
 # Add a boid into the System
 def mousePressed():
-    global img_element
-    flock.addBoid(Boid(mouseX, mouseY, img_element[int(random(0,len(img_element)))]))
+    global img_element, word
+    flock.addBoid(Boid(mouseX, mouseY, img_element[int(random(0,len(img_element)))]), word)
+    
+def keyPressed():
+  if (key == 'q'):
+    videoExport.endMovie()
+    exit()

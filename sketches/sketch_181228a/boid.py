@@ -12,12 +12,19 @@ class Boid(object):
         resize_perc = self.r / max(img.width, img.height)
         img.resize(int(img.width * resize_perc), int(img.height * resize_perc))
         self.img = img
+        self.target = PVector(x, y)
 
-    def run(self, boids):
-        self.flock(boids)
-        self.update()
-        self.borders()
-        self.render()
+    def run(self, boids, word):
+        if word:
+            if dist(self.location.x, self.location.y, self.target.x, self.target.y) > 2:
+                self.update()
+            # make the boid stay in the formation if it is used for it
+            self.render()
+        else:
+            self.flock(boids)
+            self.update()
+            self.borders()
+            self.render()
 
     def applyForce(self, force):
         # We could add mass here if we want A = F / M
@@ -66,33 +73,20 @@ class Boid(object):
     def render(self):
         # Draw a triangle rotated in the direction of velocity.
         theta = self.velocity.heading2D() + radians(90)
-        self.angle += 0.05
         # heading2D() above is now heading() but leaving old syntax until
         # Processing.js catches up.
         #fill(200, 100)
         #stroke(255)
         noFill()
         noTint()
+        noStroke()
         with pushMatrix():
             translate(self.location.x, self.location.y)
             rotate(theta)
-            stroke(89,254,232)
-            strokeWeight(1)
-            atom1 = createShape(ELLIPSE, 0, 0, 3*self.img.width, 4*self.img.height)
-            atom2 = createShape(ELLIPSE, 0, 0, 3*self.img.width, 4*self.img.height)
-            atom3 = createShape(ELLIPSE, 0, 0, 3*self.img.width, 4*self.img.height)
-            atom1.rotateX(self.angle)
-            atom2.rotateY(self.angle)
-            atom3.rotateZ(self.angle)
-            atom = createShape(GROUP)
-            atom.addChild(atom1)
-            atom.addChild(atom2)
-            atom.addChild(atom3)
-            #shape(atom)
+            
             with beginShape(QUADS):
                 texture(self.img)
-                noStroke()
-                noTint()
+                
                 # Middle face.
                 vertex(-self.img.width,
                    -self.img.height,
@@ -110,105 +104,6 @@ class Boid(object):
                    self.img.height,
                    0,
                    0, 1)
-                #stroke(89,254,232)
-                #strokeWeight(2)
-                # Front face.
-                #vertex(-self.r,
-                #   -self.r,
-                #   -self.r)
-                #vertex(self.r,
-                #   -self.r,
-                #   -self.r)
-                #vertex(self.r,
-                #   self.r,
-                #   -self.r)
-                #vertex(-self.r,
-                #   self.r,
-                #   -self.r)
-    
-                # Back face.
-                #vertex(-self.r,
-                #   -self.r,
-                #   self.r)
-                #vertex(self.r,
-                #   -self.r,
-                #   self.r)
-                #vertex(self.r,
-                #   self.r,
-                #   self.r)
-                #vertex(-self.r,
-                #   self.r,
-                #   self.r)
-    
-                # Left face.
-                #vertex(-self.r,
-                #   -self.r,
-                #   -self.r)
-                #vertex(-self.r,
-                #   -self.r,
-                #   self.r)
-                #vertex(-self.r,
-                #   self.r,
-                #   self.r)
-                #vertex(-self.r,
-                #   self.r,
-                #   -self.r)
-    
-                # Right face.
-                #vertex(self.r,
-                #   -self.r,
-                #   -self.r)
-                #vertex(self.r,
-                #   -self.r,
-                #   self.r)
-                #vertex(self.r,
-                #   self.r,
-                #   self.r)
-                #vertex(self.r,
-                #   self.r,
-                #   -self.r)
-    
-                # Top face.
-                #vertex(-self.r,
-                #   -self.r,
-                #   -self.r)
-                #vertex(self.r,
-                #   -self.r,
-                #   -self.r)
-                #vertex(self.r,
-                #   -self.r,
-                #   self.r)
-                #vertex(-self.r,
-                #   -self.r,
-                #   self.r)
-    
-                # Bottom face.
-                #vertex(-self.r,
-                #   self.r,
-                #   -self.r)
-                #vertex(self.r,
-                #   self.r,
-                #   -self.r)
-                #vertex(self.r,
-                #   self.r,
-                #   self.r)
-                #vertex(-self.r,
-                #   self.r,
-                #   self.r)
-            #beginShape(TRIANGLES)
-            #texture(self.img)
-            #vertex(0, -self.r * 2, 0)
-            #vertex(-self.r, self.r * 2, 0)
-            #vertex(self.r, self.r * 2, 0)
-            
-            #vertex(0, -self.r * 2, 0)
-            #vertex(0, self.r * 2, self.r)
-            #vertex(-self.r, self.r * 2, 0)
-    
-            #vertex(0, -self.r * 2, 0)
-            #vertex(0, self.r * 2, self.r)
-            #vertex(self.r, self.r * 2, 0)
-            #endShape()
 
     # Wraparound
     def borders(self):
@@ -294,3 +189,4 @@ class Boid(object):
             return self.seek(sum)  # Steer towards the location.
         else:
             return PVector(0, 0)
+        
