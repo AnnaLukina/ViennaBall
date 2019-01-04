@@ -18,14 +18,15 @@ from flock import Flock
 flock = Flock()
 
 def setup():
-    global img_element, columns, rows, cellsize, img, explode, frame, word, spots
+    global img_element, columns, rows, cellsize, img, explode, frame, word, spots, start_pack, pack
     img = loadImage("Head_Hearts.gif")  # Load the image
     cellsize = 2  # Dimensions of each cell in the grid
     columns = img.width / cellsize  # Calculate # of columns
     rows = img.height / cellsize  # Calculate # of rows
-    explode = 0
     frame = 0
-    frameRate(100)
+    pack = 1000 # number of elements needed to pack into letters
+    start_pack = 500 # frame number from which to start packing
+    #frameRate(100)
     
     size(1500, 1000, P3D)
     
@@ -47,13 +48,13 @@ def setup():
         boid_x = random(-width / 2, width / 2)
         boid_y = random(-height / 2, height / 2)
         
-        for i in range(10):
+        for i in range(int(pack / len(img_element))):
             flock.addBoid(Boid(boid_x, boid_y, img_element[k]), word)
     
     # read white pixels of the word image        
     spots = []
-    img_word = loadImage("nauka.png")
-    img_word.resize(1500, 500)
+    img_word = loadImage("nauka_english.png")
+    img_word.resize(width, int(img_word.height * width / img_word.width))
     img_word.loadPixels()
     for x in range(img_word.width):
         for y in range(img_word.height):
@@ -64,11 +65,11 @@ def setup():
                 spots.append(PVector(x,y))
    
 def draw():
-    global img_element, columns, rows, cellsize, img, explode, frame, word, spots
+    global img_element, columns, rows, cellsize, img, explode, frame, word, spots, start_pack, pack
     background(0)
     
     # spawn a given word which will join the flock
-    if frame > 500 and frame < 1000:
+    if frame > start_pack and frame < pack + start_pack * 2:
         # spawn elements in white pixels of word image
         word = 1
         # pick a random element
@@ -81,22 +82,27 @@ def draw():
 
         # make the word to be stable for a few frames
         flock.run(word)
-    if frame >= 1000:
+    if frame >= pack + start_pack * 2:
         word = 1
         flock.run(word)
-    if frame >= 1200 and flock.letters:
-        # make the word join the flock
+    if frame >= pack + start_pack * 2 and flock.letters:
+        # make the word join the flock every 100th frame
         if not frame % 100:
             word = 0
-            for b in range(5):
-                flock.addBoid(flock.letters[-1], word)
-                del flock.letters[-1]
+            for b in range(100):
+                if flock.letters:
+                    flock.addBoid(flock.letters[-1], word)
+                    del flock.letters[-1]
+                else:
+                    noLoop()
     
     frame += 1
     word = 0
     flock.run(word)
+    if frame == pack * 4:
+        noLoop()
     
-    #videoExport.saveFrame()
+    saveFrame("frame-######.png")
 
 # Add a boid into the System
 def mousePressed():

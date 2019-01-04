@@ -16,7 +16,7 @@ class Boid(object):
 
     def run(self, boids, word):
         if word:
-            if dist(self.location.x, self.location.y, self.target.x, self.target.y) > 2:
+            if dist(self.location.x, self.location.y, self.target.x, self.target.y) > 1:
                 self.update()
             # make the boid stay in the formation if it is used for it
             self.render()
