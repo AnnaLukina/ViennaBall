@@ -102,7 +102,7 @@ def draw():
     if frame == pack * 4:
         noLoop()
     
-    saveFrame("frame-######.png")
+    #saveFrame("frame-######.png")
 
 # Add a boid into the System
 def mousePressed():
