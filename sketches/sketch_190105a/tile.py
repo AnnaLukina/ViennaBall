@@ -11,7 +11,7 @@ class Tile:
         self.dr = PVector(0, 0) # delta rotation
         self.othersImpact = PVector(0, 0)
         self.r = PVector(0, 0) # rotation
-        self.mouseImpacted = 0
+        self.mouseImpacted = False
         self.enabled = enabled
         self.i = p_i
         self.j = p_j
@@ -23,14 +23,14 @@ class Tile:
 
     def process(self, tiles, p_mX, p_mY, p_strength, nbTilesW, nbTilesH):
         if (self.minXY.x < p_mX and p_mX < self.maxXY.x and self.minXY.y < p_mY and p_mY < self.maxXY.y):
-            self.dr.x = map(p_strength.y, -15, 15, PI/4, -PI/4)
+            self.dr.x = map(p_strength.y, -15, 15, PI/2, -PI/2)
             self.dr.y = map(p_strength.x, -15, 15, -PI/4, PI/4)
         if (self.enabled):
-            self.mouseImpacted = 1
+            self.mouseImpacted = True
             self.processNeighbors(tiles, self.dr.get(), nbTilesW, nbTilesH)
       
     def processNeighbors(self, tiles, p_strength, nbTilesW, nbTilesH):
-        l_strength = p_strength.get()*0.1
+        l_strength = p_strength.get()
         if (not self.mouseImpacted):
             self.othersImpact.add(l_strength)
         if (l_strength.mag() > 0.1):
@@ -53,10 +53,11 @@ class Tile:
             if (self.i < nbTilesW-1 and self.j < nbTilesH-1): 
                 tiles[self.i+1][self.j+1].processNeighbors(tiles, l_strength, nbTilesW, nbTilesH) # corner bottom right tile
 
-    def display(self, tileW, tileH):
+    def display(self, tileW, tileH, VCLA):
         self.dr.add(self.othersImpact)
         self.r.add(self.dr)
         self.r.mult(0.9)
+        rectMode(CENTER)
 
         fill(color(map(self.r.x, 0, PI/4, 210, 0), map(self.r.y, 0, PI/4, 210, 0), 210))
 
@@ -68,51 +69,52 @@ class Tile:
         noFill()
         noTint()
         noStroke()
-        self.img[0].resize(tileW, tileH)
-        self.img[1].resize(tileW, tileH)
-        k = 1
         textureMode(NORMAL)
         beginShape()
-        texture(self.img[k])
+        texture(self.img[1])
         # Front face.
-        vertex(-self.img[k].width/2,
-        -self.img[k].height/2,
+        vertex(-self.img[1].width/2,
+        -self.img[1].height/2,
         min(tileW, tileH)/4,
         0, 0)
-        vertex(self.img[k].width/2,
-        -self.img[k].height/2,
+        vertex(self.img[1].width/2,
+        -self.img[1].height/2,
         min(tileW, tileH)/4,
         1, 0)
-        vertex(self.img[k].width/2,
-        self.img[k].height/2,
+        vertex(self.img[1].width/2,
+        self.img[1].height/2,
         min(tileW, tileH)/4,
         1, 1)
-        vertex(-self.img[k].width/2,
-        self.img[k].height/2,
+        vertex(-self.img[1].width/2,
+        self.img[1].height/2,
         min(tileW, tileH)/4,
         0, 1)
         endShape()
+        if VCLA:
+            k = 1
+        else:
+            k = 0
         beginShape()
-        texture(self.img[0])
+        texture(self.img[k])
         # Back face.
-        vertex(-self.img[0].width/2,
-        -self.img[0].height/2,
+        vertex(-self.img[k].width/2,
+        -self.img[k].height/2,
         -min(tileW, tileH)/4,
         1, 1)
-        vertex(self.img[0].width/2,
-        -self.img[0].height/2,
+        vertex(self.img[k].width/2,
+        -self.img[k].height/2,
         -min(tileW, tileH)/4,
         0, 1)
-        vertex(self.img[0].width/2,
-        self.img[0].height/2,
+        vertex(self.img[k].width/2,
+        self.img[k].height/2,
         -min(tileW, tileH)/4,
         0, 0)
-        vertex(-self.img[0].width/2,
-        self.img[0].height/2,
+        vertex(-self.img[k].width/2,
+        self.img[k].height/2,
         -min(tileW, tileH)/4,
         1, 0)
         endShape()
         popMatrix()
     
         self.othersImpact = PVector(0, 0)
-        self.mouseImpacted = 0
+        self.mouseImpacted = False
