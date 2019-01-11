@@ -28,7 +28,7 @@ def setup():
     start_pack = 500 # frame number from which to start packing
     #frameRate(100)
     
-    size(1500, 1000, P3D)
+    size(1200, 1600, P3D)
     
     img_element = []
     img_element.append(loadImage("Heart Red.gif"))

@@ -10,7 +10,7 @@ Nucleus turning around the dancing couples
 traceOrbit = 200
 traceOrbit2 = 100
 traceOrbit3 = 100
-rDancer = 100.0
+rDancer = 150.0
 
 from dancers import Dancers
 from electron import Electron
@@ -43,7 +43,7 @@ def setup():
     
     back = loadImage("stairs_11.jpg")
     holo = loadImage("9.jpg")
-    size(1500,1000,P3D)
+    size(1200,1600,P3D)
     smooth()
     lights()
     noStroke()
@@ -125,6 +125,6 @@ def printTrace():
     stroke(255)
     strokeWeight(5)
     orbit = createShape(ELLIPSE, 0, 0, traceOrbit, traceOrbit2)
-    orbit.rotateX(3*PI/4)
+    orbit.rotateX(-3*PI/4)
     return orbit
     #ellipse(0, 0, traceOrbit, traceOrbit2)

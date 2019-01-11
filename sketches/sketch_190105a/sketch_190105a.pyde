@@ -10,7 +10,7 @@ from tile import Tile
 
 def setup():
     global tiles, tileW, tileH, myKey, nbTilesW, nbTilesH, gapW, gapH, TILE_WIDTH, TILE_HEIGHT, enabled, img_dancers, img_hearts_logics, VCLA
-    size(1500, 1000, P3D)
+    size(1200, 1600, P3D)
     rectMode(CENTER)
     strokeWeight(2)
     stroke(0)
