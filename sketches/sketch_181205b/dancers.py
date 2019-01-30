@@ -7,7 +7,7 @@ class Dancers:
         self.y = 0.0
         self.z = 0.0
         
-    def display(self, x, y, z):
+    def display(self):
         noStroke()
         noFill()
         noTint()
@@ -33,4 +33,5 @@ class Dancers:
         1,
         0, 1)
         dancer.endShape()
+        dancer.translate(self.x, self.y, self.z)
         return dancer

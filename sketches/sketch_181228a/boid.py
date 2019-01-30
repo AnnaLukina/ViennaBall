@@ -1,17 +1,18 @@
 # The Boid class
 class Boid(object):
 
-    def __init__(self, x, y, img):
+    def __init__(self, x, y, img, palette):
         self.acceleration = PVector(0, 0)
         self.angle = random(TWO_PI)
         self.velocity = PVector(cos(self.angle), sin(self.angle))
         self.location = PVector(x, y)
-        self.r = 10.0
+        self.r = 7.0
         self.maxspeed = 2
         self.maxforce = 0.03
         resize_perc = self.r / max(img.width, img.height)
         img.resize(int(img.width * resize_perc), int(img.height * resize_perc))
         self.img = img
+        self.palette = palette
         self.target = PVector(x, y)
 
     def run(self, boids, word):
@@ -83,6 +84,8 @@ class Boid(object):
         with pushMatrix():
             translate(self.location.x, self.location.y)
             rotate(theta)
+            r = random(4)
+            fill(self.palette[int(r)])
             
             with beginShape(QUADS):
                 texture(self.img)

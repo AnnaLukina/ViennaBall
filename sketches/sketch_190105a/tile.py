@@ -1,13 +1,14 @@
 # class of each step of the stairs
 class Tile:
     
-    def __init__(self, p_x, p_y, p_i, p_j, tileW, tileH, enabled, img_dancer, img_heart_logic):
+    def __init__(self, p_x, p_y, p_z, p_i, p_j, tileW, tileH, enabled, img_heart_logic):
         self.img = []
-        self.img.append(img_dancer)
         self.img.append(img_heart_logic)
         # position
         self.x = p_x
         self.y = p_y
+        self.z = p_z
+        self.velocity = PVector(0, 0)
         self.dr = PVector(0, 0) # delta rotation
         self.othersImpact = PVector(0, 0)
         self.r = PVector(0, 0) # rotation
@@ -53,67 +54,100 @@ class Tile:
             if (self.i < nbTilesW-1 and self.j < nbTilesH-1): 
                 tiles[self.i+1][self.j+1].processNeighbors(tiles, l_strength, nbTilesW, nbTilesH) # corner bottom right tile
 
-    def display(self, tileW, tileH, VCLA):
+    def display(self, tileW, tileH, VCLA, palette, back):
         self.dr.add(self.othersImpact)
         self.r.add(self.dr)
         self.r.mult(0.9)
         rectMode(CENTER)
 
-        fill(color(map(self.r.x, 0, PI/4, 210, 0), map(self.r.y, 0, PI/4, 210, 0), 210))
+        if frameCount <= 1500:
+            r = random(4)
+            s = random(1000)
+            if (s < 10):
+                strokeWeight(random(20))
+                stroke(palette[int(r)])
+                fill(palette[int(r)])
+            else:
+                #strokeWeight(5)
+                #stroke(color(map(self.r.x, 0, PI/4, 255, 0), map(self.r.y, 0, PI/4, 255, 0), 255))
+                #fill(0)
+                noStroke()
+                fill(255)
+            if VCLA:
+                stroke(palette[int(r)]) 
+                fill(palette[int(r)])
+        else:
+            #strokeWeight(5)
+            #stroke(255)
+            noStroke()
+            fill(255)
 
         pushMatrix()
-        translate(self.x, self.y)
+        translate(self.x, self.y, self.z)
         rotateX(self.r.x)
+        if frameCount > 1500:
+            rotateZ(self.y/100)
+            rotateX(self.y/100)
         #rotateY(self.r.y)
-        box(tileW, tileH, min(tileW, tileH)/2)
-        noFill()
-        noTint()
+        #box(tileW, tileH, min(tileW, tileH))
+        cube = createShape(BOX, tileW, tileH, min(tileW, tileH))
+        cube.setTexture(back)
+        cube.rotateX(-PI/7)
+        shape(cube)
+        if frameCount > 1500:
+            rotateX(-self.y/100)
+            rotateZ(-self.y/100)
+        fill(255)
         noStroke()
+        #if frameCount <= 1500 and not VCLA and r < 1:
+            #rotate(radians(random(-10,10)))
         textureMode(NORMAL)
-        beginShape()
-        texture(self.img[1])
+        #beginShape()
+        #texture(self.img[1])
         # Front face.
-        vertex(-self.img[1].width/2,
-        -self.img[1].height/2,
-        min(tileW, tileH)/4,
-        0, 0)
-        vertex(self.img[1].width/2,
-        -self.img[1].height/2,
-        min(tileW, tileH)/4,
-        1, 0)
-        vertex(self.img[1].width/2,
-        self.img[1].height/2,
-        min(tileW, tileH)/4,
-        1, 1)
-        vertex(-self.img[1].width/2,
-        self.img[1].height/2,
-        min(tileW, tileH)/4,
-        0, 1)
-        endShape()
-        if VCLA:
-            k = 1
-        else:
-            k = 0
-        beginShape()
-        texture(self.img[k])
-        # Back face.
-        vertex(-self.img[k].width/2,
-        -self.img[k].height/2,
-        -min(tileW, tileH)/4,
-        1, 1)
-        vertex(self.img[k].width/2,
-        -self.img[k].height/2,
-        -min(tileW, tileH)/4,
-        0, 1)
-        vertex(self.img[k].width/2,
-        self.img[k].height/2,
-        -min(tileW, tileH)/4,
-        0, 0)
-        vertex(-self.img[k].width/2,
-        self.img[k].height/2,
-        -min(tileW, tileH)/4,
-        1, 0)
-        endShape()
+        #vertex(-self.img[1].width/2,
+        #-self.img[1].height/2,
+        #min(tileW, tileH)/4,
+        #0, 0)
+        #vertex(self.img[1].width/2,
+        #-self.img[1].height/2,
+        #min(tileW, tileH)/4,
+        #1, 0)
+        #vertex(self.img[1].width/2,
+        #self.img[1].height/2,
+        #min(tileW, tileH)/4,
+        #1, 1)
+        #vertex(-self.img[1].width/2,
+        #self.img[1].height/2,
+        #min(tileW, tileH)/4,
+        #0, 1)
+        #endShape()
+        
+        if frameCount > 1500:
+            r = random(4)
+            fill(palette[int(r)])
+            rotateX(-self.r.x)
+            translate(-2*self.x, -2*self.y, -self.z - 1000)
+        rotateX(-PI/7)
+        with beginShape(QUADS):
+            texture(self.img[0])
+            # Back face.
+            vertex(self.img[0].width/2-10,
+            -self.img[0].height/2+10,
+            -min(tileW, tileH)/2-1,
+            1, 1)
+            vertex(-self.img[0].width/2+10,
+            -self.img[0].height/2+10,
+            -min(tileW, tileH)/2-1,
+            0, 1)
+            vertex(-self.img[0].width/2+10,
+            self.img[0].height/2-10,
+            -min(tileW, tileH)/2-1,
+            0, 0)
+            vertex(self.img[0].width/2-10,
+            self.img[0].height/2-10,
+            -min(tileW, tileH)/2-1,
+            1, 0)
         popMatrix()
     
         self.othersImpact = PVector(0, 0)

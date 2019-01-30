@@ -25,7 +25,7 @@ class Flock(object):
                 self.letters[-1].acceleration.mult(0)
                 self.letters[-1].velocity = PVector.sub(b.location, self.letters[-1].location)
                 self.letters[-1].velocity.normalize()
-                self.letters[-1].velocity.mult(self.letters[-1].maxspeed)
+                self.letters[-1].velocity.mult(self.letters[-1].maxspeed * 20)
                 self.letters[-1].target = b.location
             else:
                 # or spawn a new one at the given pixel location

@@ -1,0 +1,2 @@
+- get rid of elements poping up instead of flying
+- make them fly faster towards the letters
